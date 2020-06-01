@@ -1,0 +1,4 @@
+1,Hadoop: The Definitive Guide,2012/06
+2,HBase: The Definitive Guide,2011/09
+3,Programming Pig,2011/10
+4,Hadoop in Action,2010/12

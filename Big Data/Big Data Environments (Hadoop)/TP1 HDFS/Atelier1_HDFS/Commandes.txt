@@ -1,0 +1,9 @@
+hadoop fs -mkdir atelier1
+hadoop fs -put /home/cloudera/Desktop/purchases.txt atelier1 #centos -> hdfs
+hadoop fs -ls atelier1 #size file + replic 3
+hadoop fsck /user/cloudera/atelier11/purchases.txt -files -blocks
+hadoop fs -cat atelier1/purchases.txt | head -n 25
+hadoop fs -cp atelier1/purchases.txt atelier1/purchases_hdfsCopy.txt #hdfs -> hdfs
+8 - #systeme local = centos
+hadoop fs -get atelier11/purchases_hdfsCopy.txt /home/cloudera/Desktop #hdsf -> centos
+9- hadoop dfsadmin -report 

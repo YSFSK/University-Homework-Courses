@@ -1,0 +1,16 @@
+X = read.csv("C:\\Users\\Wael Dhouib\\Documents\\4DS2\\Machine Learning\\06 Régression\\ventes_semestrielles_train.csv",sep=",",dec=".", header=T, na.string = "")
+y = read.csv("C:\\Users\\Wael Dhouib\\Documents\\4DS2\\Machine Learning\\06 Régression\\ventes_semestrielles_test.csv",sep=",",dec=".", header=T, na.string = "")
+summary(X)
+summary(y)
+model = lm(VENTES ~., data = X)
+summary(model)
+plot(model)
+library(MASS)
+stepAIC(model)
+modelreduit = lm(VENTES ~ ï..MT+PUB, data = X)
+summary(modelreduit)
+y_pred = model %>% predict(X)
+y_predreduit = modelreduit %>% predict(X)
+y_pred
+y_predreduit
+cbind(y$VENTES,y_pred,y_predreduit)

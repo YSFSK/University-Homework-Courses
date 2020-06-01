@@ -1,0 +1,10 @@
+Individus=c("Erika","Celia","Eric","Eve","Paul","Jean","Aden","Louis","Jules","Léo")
+Poids=c(16,14,13.5,15.5,16.5,16,17,14.8,17,16.7)
+Taille=c(100.0,97.0,95.0,101.0,100.0,98.5,103.0,98.0,101.5,100.0)
+Sexe=c("F","F","G","F","G","G","G","G","G","G")
+mean(Poids)
+mean(Taille)
+IMC=Poids/((Taille/100)^2)
+IMC
+tableau= data.frame(Individus, Poids, Taille, Sexe, IMC)
+plot(Taille, Poids, main="Titre")

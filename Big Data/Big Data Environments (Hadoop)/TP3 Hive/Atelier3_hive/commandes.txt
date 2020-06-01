@@ -1,0 +1,39 @@
+EXERCICE1:
+
+hive
+use hdb
+1)create table livres(id int, title string, publishdate string) row format delimited fields terminated by ',' ;
+2)load data local inpath '/home/cloudera/Desktop/books.txt' overwrite into table livres; 
+3)select * from livres where id=2;
+4)hadoop fs -mkdir /user/cloudera/atelier3/
+  hadoop fs -ls /user/cloudera
+  create table ventes (id int, buyer string, purchasedate string) row format delimited fields terminated by '\t' location '/user/cloudera/atelier3' ;
+  load data local inpath '/home/cloudera/Desktop/book-purchases.txt' overwrite into table ventes;5)
+
+5)select * from ventes;
+6)create table venteslivres (id int, title string, buyer string, purchasedate string) ;
+7)insert overwrite table venteslivres select l.id, l.title, v.buyer, v.purchasedate from livres l join ventes v on l.id = v.id;
+8)select * from venteslivres limit 10;
+9)
+
+
+EXERCICE2:
+
+1)create table media (id int, title string, releasedate string) row format delimited fields terminated by ',' partitioned by (type string);
+
+load data local inpath '/home/cloudera/Desktop/media/books.txt' overwrite into table media partition (type='book');
+load data local inpath '/home/cloudera/Desktop/media/dvds.txt' overwrite into table media partition (type='dvd');
+load data local inpath '/home/cloudera/Desktop/media/cds.txt' overwrite into table media partition (type='cd'); 
+
+
+4)show partitions media;
+5)hadoop fs -ls /user/hive/warehouse/hdb.db/media
+6)drop table media;
+
+
+
+
+
+
+
+

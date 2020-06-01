@@ -1,0 +1,167 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+
+```{r}
+n=1000
+U=runif(n)
+a=1
+b=4
+```
+
+#Loi Uniforme 
+
+```{r}
+X=(b-a)*U+a
+plot(X)
+```
+
+##Fonction de répartition empirique de la loi uniforme
+```{r}
+plot(ecdf(X))
+```
+
+##Fonction de répartition théorique et comparaison avec celle empirique
+
+```{r}
+plot(ecdf(X))
+d=seq(a,b,0.01)
+Fth=(d-a)/(b-a)
+lines(d,Fth,col="red")
+```
+
+##Histogramme de densité de la loi uniforme
+```{r}
+hist(X,freq = F)
+```
+
+
+##Représentation histogramme + fonction de densité théorique de la loi uniforme
+```{r}
+hist(X,freq = F)
+fth=(1/(b-a))*rep(1,length(d))
+lines(d,fth,col="red")
+```
+
+
+
+
+
+#Loi exponentielle de paramètre lambda
+
+```{r}
+n1=1000
+U=runif(n1)
+l=1/2
+X1=(-1/l)*log(1-U)
+plot(X1)
+```
+
+##Fonction de répartition empirique de la loi exponentielle
+```{r}
+plot(ecdf(X1))
+```
+
+
+##Fonction de répartition théorique de la loi exponentielle avec l'empirique
+```{r}
+plot(ecdf(X1))
+d=seq(min(X1),max(X1),0.01)
+Fth= 1 - exp(-l*d)
+lines(d,Fth,col='red')
+```
+
+##Représentation histogramme + fonction de densité théorique de la loi exponentielle
+```{r}
+hist(X1,freq = F)
+fth1=l*exp(-l*d)
+lines(d,fth1,col="red")
+```
+
+
+
+# Loi de Cauchy
+
+```{r}
+X2=tan(pi*(U-0.5))
+plot(X2)
+```
+
+
+##Fonction de répartition avec la fct de répart empirique de la loi de Cauchy
+```{r}
+plot(ecdf(X2))
+d2=seq(min(X2),max(X2),0.01)
+Fth2=(1/pi)*atan(d2)+1/2
+lines(d2,Fth2,col="red")
+```
+
+
+
+##Représentation histogramme + fonction de densité théorique de la loi de Cauchy
+```{r}
+hist(X2,freq = F)
+fth2= 1/(pi*(1+d2**2))
+lines(d2,fth2,col='red')
+```
+
+## Loi de Bernouilli
+```{r}
+U=runif(n)
+p=0.4
+X_Ber=c()
+for (i in 1:length(U)){
+  X_Ber[i]= if (U[i]<=1-p) 0 else 1
+}
+plot(ecdf(X_Ber),verticals = T)
+d=seq(min(X_Ber),max(X_Ber),0.01)
+
+```
+
+#Loi binomiale
+```{r}
+n_binom=30
+X_binom=0
+for (j in 1:30){
+  X=0
+  U=runif(n)
+  for (i in 1:length(U)){
+      
+      X[i] = if (U[i]<=p) 0 else 1
+  }
+  X_binom=X_binom+X
+}
+X_binom[1:10]
+plot(ecdf(X_binom))
+hist(X_binom,freq=F)
+
+```
+
+
+#Suite TP1?
+#Loi Normale N(0,1) : histogramme avec fonction de densité théorique
+```{r}
+n=1000
+U=runif(n)
+V=runif(n)
+X=sqrt(-2*log(U))*cos(2*pi*V)
+#Y=sqrt(-2*log(U))*sin(2*pi*V) ou cette expression
+hist(X,freq = F)
+d=seq(min(X),max(X),0.1)
+fth=(1/(sqrt(2*pi)))*(exp((-d**2)/2))
+lines(d,fth,col='red')
+
+```
+
+
+#Loi Normale N(1,4) à partir de X->N(0,1) : histogramme avec fonction de densité théorique
+```{r}
+Z=2*X + 1
+hist(Z,freq = F)
+d1=seq(min(Z),max(Z),0.1)
+fth1=(1/(2*sqrt(2*pi)))*(exp(-0.5*((d1-1)/2)^2))
+lines(d1,fth1,col="red")
+```
+

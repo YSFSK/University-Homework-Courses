@@ -1,0 +1,74 @@
+hadoop fs -mkdir Pig
+hadoop fs -put /home/cloudera/Desktop/Pig/student_details.txt Pig
+hadoop fs -ls Pig
+pig -x mapreduce
+grunt> students = load 'Pig/student_details.txt' using PigStorage(','); #as (id:int, firstname:chararray ....); 
+#bag = students
+dump students;
+
+grunt> etud1 = foreach etudiants generate firstname, age;  # = select firstname, age from etudiants;
+#si on n'a pas a un schema # etud1 = foreach etudiants generate $1 as name, $3 as age;
+=> il faut acceder à la position
+grunt> etud2 = filter etud1 by age > 20 ; => select * from etud1 where age>20
+#order etud1 by age
+
+grunt> etud_group = Group etud1 by age
+grunt> tot_age = foreach etud_group generate group as age , COUNT(etud1.firstname);
+=> select count(*) from edtud1 group by age;
+
+grunt> dump etud_group;
+# Group / Flatten
+
+grunt>   store tot_age into 'output' using PigStorage ;
+
+************************************************************************************************************************************************
+
+hadoop fs -put /home/cloudera/Desktop/Pig/drivers.csv Pig
+hadoop fs -put /home/cloudera/Desktop/Pig/timesheet.csv Pig
+pig -x mapreduce /home/cloudera/Desktop/Pig/script_cours.pig
+
+*************************************************************************************************************************************************
+ATELIER 4 EX1:
+
+1)
+hadoop fs -put /home/cloudera/Desktop/Pig/artists.json Pig
+hadoop fs -put /home/cloudera/Desktop/Pig/movies.json Pig
+
+2) movies = LOAD 'Pig/movies.json'   USING JsonLoader('id:chararray, title:chararray, year:chararray,                     genre:chararray,country:chararray,                     director: (id:chararray,lastName:chararray,                               firstName:chararray,birthDate:chararray),                     actors: {(id:chararray, role:chararray)}'); 
+artists = load 'Pig/artists.json'                                                                  
+>> using JsonLoader ('id:chararray, last_name:chararray, first_name:chararray, birth_date:chararray');
+grunt> dump artists;
+
+3)
+grunt> films = foreach movies generate title,year,country;
+grunt> dump films;
+
+grunt> films_amerc = filter films_amerc by country == 'USA';
+grunt> dump films_amerc;   
+
+films_amerc_group = Group films_amerc by year; 
+grunt> dump films_amerc_group;
+
+4)
+grunt> films_direct = foreach movies generate title, country, year, director;
+grunt> dump films_direct;
+
+grunt> films_direct_amerc = filter films_direct by country == 'USA';
+grunt> dump films_direct_amerc;
+
+grunt> films_direct_amerc_group = Group films_direct_amerc by director;   
+grunt> dump films_direct_amerc_group;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

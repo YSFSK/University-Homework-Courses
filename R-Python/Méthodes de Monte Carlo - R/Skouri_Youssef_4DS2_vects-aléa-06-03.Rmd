@@ -1,0 +1,130 @@
+---
+title: "Feille de TP -Vecteur alatoires"
+output: html_document
+---
+
+```{r}
+X1=rexp(10000,1/2)
+X2=rgamma(10000,3,1)
+X3=rbinom(10000,1,0.25)
+X=cbind(X1,X2,X3)
+```
+
+```{r}
+mean(X[1])
+mean(X[2])
+mean(X[3])
+mean(X)
+moy=apply(X,2,mean)#calcule la moynne des colonnes
+moy
+```
+
+```{r}
+covX=cov(X)
+covX
+```
+
+##Exercice 2:
+## QU1
+```{r}
+K=rbind(c(1,0.5),c(0.5,1))
+#K=matrix(c(1,rho,1,rho),2,2)
+K
+```
+```{r}
+A=chol(K)
+A%*%t(A)
+eigen(A)
+```
+##QU2
+```{r}
+K1=rnorm(1)
+K2=rnorm(1)
+K3=rnorm(2)
+Z=cbind(K1,K2)
+K3
+Z
+```
+
+##Qu3
+```{r}
+X=t(A)%*%K3#A doit être triangulaire suprieure
+X
+
+```
+
+##Qu4
+```{r}
+K=rbind(c(1,0.5),c(0.5,1))
+#K=matrix(c(1,rho,1,rho),2,2)
+K
+N=10000
+x=matrix(, nrow = N, ncol = 2)
+for (i in 1:N){
+  K3=rnorm(2)
+  x[i,]=t(A)%*%K3
+  }
+moy1=apply(x,2,mean)
+moy1
+cov(x)
+x[1:5,]
+```
+
+```{r}
+plot(x[,1],x[,2])
+plot(x)
+```
+```{r}
+f_rho = function(rho){
+  N=10000
+  K=matrix(c(1,rho,rho,1),2,2)
+  A=chol(K)
+  xx=matrix(, nrow = N, ncol = 2)
+  for (i in 1:N){
+    K
+    K3=rnorm(2)
+    xx[i,]=t(A)%*%K3
+  }
+  plot(xx,main=cat("Rho ",rho))
+  return(xx)
+}
+
+```
+
+```{r}
+for (i in seq(-0.9,0.9,0.1)){
+xx=f_rho(i)
+}
+```
+#Exercice 3
+```{r}
+library(rgl)#Pour la visualisation 3d
+N=10000
+K1=matrix(c(14,8,3,8,6,-3,3,-3,26),3,3)
+m=c(-1,0,2)
+f2_rho = function(K,m,N){
+  A=chol(K)
+  x=matrix(, nrow = N, ncol = 3)
+  #X1=rnorm(N,mean = m[1])
+  #X2=rnorm(N,mean = m[2])
+  #X3=rnorm(N,mean = m[3])
+  for (i in 1:N){
+    Z3=rnorm(3)+m
+    Z3
+    x[i,]=t(A)%*%Z3
+  }
+  plot3d(x,col = 'red')
+  return(x)
+}
+```
+
+```{r}
+x=f2_rho(K1,m,100000)
+moy=apply(x,2,mean)
+moy
+cov(x)
+#install.packages("rgl")
+```
+
+
+

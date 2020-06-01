@@ -1,0 +1,110 @@
+---
+title: "TP2"
+output: html_document
+---
+
+#TP2
+## Loi exponentielle 
+```{r}
+n=1000
+X=rexp(n,2)
+plot(X)
+```
+
+#Influence du nombre de simulations
+## Intervalle de confiance
+```{r}
+IC=c(mean(X)-1.96*sd(X)/sqrt(n),mean(X)+1.96*sd(X)/sqrt(n))
+moy=mean(X)
+ec=sd(X)
+moy
+ec
+cat("Intervalle de confiance : ",IC)
+```
+
+## Variation du nombre de simulations
+```{r}
+d=seq(20,1000,1)
+moy=c()
+IC.i=c()
+IC.s=c()
+for(i in 1:length(d)){
+  X=rexp(d[i],2)
+  moy[i]=mean(X)
+  IC.i[i]=moy[i]-1.96*sd(X)/sqrt(d[i])
+  IC.s[i]=moy[i]+1.96*sd(X)/sqrt(d[i])
+}
+plot(d,moy,type='l')
+lines(d,IC.i,col='green')
+lines(d,IC.s,col='red')
+```
+
+
+#Exemple en finance:
+##Question 1 : Calcul de C
+```{r}
+K=105
+r=0.05
+S0=100
+t=10
+sig=0.3
+n=10000
+Wt=rnorm(n,0,sqrt(t))
+Y=S0 *exp((r-(sig**2)/2)*t+sig*Wt)-K
+C=exp(-r*t)*mean(pmax(Y,0))
+C
+
+```
+
+```{r}
+hist(Wt)
+ICWt=c(mean(Wt)-1.96*(sig/sqrt(n)),mean(Wt)+1.96*(sig/sqrt(n)))
+cat("Intervalle de confiance : ",ICWt)
+```
+
+
+##Question 2 : Effet de la Variation du taux d'intérêt sur le prix
+```{r}
+Cvect=c()
+k=1
+for (i in seq(0,1.5,0.01)){
+  XT=S0 *exp((r-(sig**2)/2)*t + sig*Wt) - K
+  Y=pmax(XT,0)
+  E=mean(Y)
+  Cvect[k]=exp(-i*t)*E
+  k=k+1
+}
+plot(seq(0,1.5,0.01),Cvect,type="l",xlab = "Le taux d'intérêt",ylab="Le prix")
+```
+
+
+##Question 3 : Effet de la Variation de la volatilité sur le prix
+```{r}
+Cvect1=c()
+k=1
+for (i in seq(0,4,0.01)){
+  XT=S0*exp((r-(i^2)/2)*t+i*Wt)-K
+  Y=pmax(XT,0)
+  E=mean(Y)
+  C=exp(-r*t)*E
+  Cvect1[k]=C
+  k=k+1
+}
+plot(seq(0,4,0.01),Cvect1,type="l",xlab = "Volatiltié",ylab="le prix")
+```
+
+
+
+## Question 4 : Résultat de la formule théorique
+
+```{r}
+d1=(1/(sig*sqrt(t)))*log(S0*exp(r*t)/K)+(sig/2)*sqrt(t)
+d2=d1-sig*sqrt(t)
+Cth=S0*pnorm(d1)-K*exp(-r*t)*pnorm(d2)
+Cth
+```
+
+
+
+
+

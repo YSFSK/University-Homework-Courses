@@ -1,0 +1,70 @@
+---
+title: "Travail Rééchantillonnage et Classification"
+author: "Wael Dhouib"
+date: "November 8, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+1-Importation des donn�es :
+```{r}
+dataset = read.table("C:\\Users\\Wael Dhouib\\Documents\\4DS2\\Machine Learning\\Cancer du sein.csv",sep=",",dec=".",header=T)
+tail(dataset)
+summary(dataset)
+```
+2-Cross Validation (avec 70% training et test 30%) :
+```{r}
+library(tidyverse)
+library(lattice)
+library(caret)
+library(ggplot2)
+set.seed(123)
+y_train = dataset$classe %>% createDataPartition(p = 0.7, list = FALSE)
+dim(y_train)
+X_train  = dataset[y_train, ]
+dim(X_train)
+X_test = dataset[-y_train, ]
+dim(X_test)
+y_test= dataset[-y_train, 10]
+length(y_test)
+```
+
+```{r}
+model = glm(formula = classe~bnuclei+normnucl, family = binomial, data = X_train)
+model
+```
+
+```{r}
+y_pred = model %>% predict(X_test)
+y_pred[y_pred>0.5]=1
+y_pred[y_pred<=0.5]=0
+table(y_pred,y_test)
+```
+
+3-LOOCV :
+```{r}
+set.seed(123) 
+train.control = trainControl(method = "LOOCV")
+library('e1071')
+model = train(classe~bnuclei+normnucl, data = X_train, method = "glm",trControl = train.control)
+model
+```
+
+```{r}
+y_pred = model %>% predict(X_test)
+y_pred[y_pred>0.5]=1
+y_pred[y_pred<=0.5]=0
+table(y_pred,y_test)
+```
+
+4-K-fold :
+```{r}
+set.seed(123) 
+train.control = trainControl(method = "cv", number = 10)
+model = train(classe~bnuclei+normnucl, data = X_train, method = "glm",trControl = train.control)
+y_pred = model %>% predict(X_test)
+y_pred[y_pred>0.5]=1
+y_pred[y_pred<=0.5]=0
+table(y_pred,y_test)
+```
+

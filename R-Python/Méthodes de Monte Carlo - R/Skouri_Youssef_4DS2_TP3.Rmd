@@ -1,0 +1,204 @@
+---
+title: "TP3"
+output: html_document
+---
+
+## Exemple de cours:
+```{r}
+rm(list=ls())
+N=10000
+Z=rnorm(N,0,1)
+teta=mean(exp(5*Z))
+teta
+teta_theo=exp(25/2)
+teta_theo
+ec=sd(exp(5*Z))
+ec
+#???
+```
+
+```{r}
+erreur=1.96*ec/sqrt(N)
+IC=c(teta-erreur,teta+erreur)
+IC
+sum(IC)/2
+```
+
+
+Notre objectif est de calculer la moyenne de Y( E[Y] )
+Y1 et Y2 2 va de m^me loi que Y
+E[Y]=(1/2)(E[Y1]+E[Y2])=E[(Y1+Y2)/2]
+Or Var(Y)=(1/2)*(Var(Y1))+Var(Y2))
+Var((Y1+Y2)/2)=(1/4)(Y1+Y2)=(1/4)(Var(Y1)+Var(Y2)+2cov(Y1,Y2))
+1er cas : Si Y1 et Y2 independants -> cov(Y1,Y2)=0
+Dans ce cas Var((Y1+Y2)/2)=(1/2)*(var(Y1)+var(Y2))/2=(1/2)*var(Y)
+2ème cas : cov(y1,y2)<0, alors (1/2)var(Y1+Y2)<(1/2)var(Y)
+
+#Exerice 1:
+
+```{r}
+N=10000
+U=runif(N,0,1)
+X=exp(U^2)
+teta=mean(X)
+teta
+#?integrate
+integrate(function(x) exp(x^2),0,1)#Valeur exacte , peut-être calculé par méthode de MC
+#avec N très grande
+ec=sd(X)
+er=1.96*ec/sqrt(N)
+IC=c(teta-er,teta+er)
+message("variance : ",ec)
+IC
+```
+
+```{r}
+#2
+X1=exp((1-U)^2)
+Z=(X+X1)/2
+teta2=mean(Z)
+teta2
+ec2=sd(Z)
+cat("Compraison variances  : ",c(ec,ec2))
+#La variance a bien diminué.
+```
+
+#Exerice 2:
+
+
+on calcule la fonction de répartition 
+Après on détermine F-1 
+F(X)= 0 si x<-1
+      x+ x²/2 + 1/2 -1<=x<=0
+      x- x²/2 + 1/2 0<=x<=1
+
+##Question 1 Simulation:
+```{r}
+N=10000
+Z=runif(N,0,1)
+X=rep(1,N)
+for (k in seq(1,N)){
+  if (Z[k]<=0)
+    X[k]=0
+  else if(Z[k] > 0 & (Z[k]<=1/2)){
+      X[k]=sqrt(2*Z[k])-1
+  }
+  else if (Z[k]>1/2 & (Z[k]<=1)){
+  X[k]=1-sqrt(2-2*Z[k])
+  }else 
+  X[k]=1
+}
+plot(ecdf(X))
+
+```
+
+##Question 2 Moyenne:
+```{r}
+moy=mean(X)
+ec=sd(X)
+moy
+ec
+IC=c(moy-1.96*ec/sqrt(N),moy+1.96*ec/sqrt(N))
+cat("Intervalle de confiance : ",IC)
+```
+
+## vérification avec Fthéorique
+```{r}
+x=seq(min(X),max(X),0.01)
+Fth=rep(1,length(x))
+for (k in seq(1,length(x))){
+  if (x[k]<=-1)
+    Fth[k]=0
+  else if(x[k] >=-1  & (x[k]<=0)){
+      Fth[k]=1/2+x[k]+(1/2)*x[k]^2
+  }
+  else if (x[k]>0 & (x[k]<=1)){
+  Fth[k]=(1/2)+x[k]-(1/2)*x[k]^2
+  }else 
+  Fth[k]=1
+}
+plot(ecdf(X))
+lines(x,Fth,col="red")
+
+```
+##Question 3et4 : Méthode des variables antithétiques:
+```{r}
+X1=c()
+for(k in seq(1,N)){
+  if(Z[k]<=0){
+    X1[k]=0}
+ else if((1-Z[k]>0)&(1-Z[k]<=1/2)){
+    X1[k]=sqrt(2*(1-Z[k]))-1
+  }else if((1-Z[k]>1/2)&(1-Z[k]<=1)){ 
+    X1[k]=1-sqrt(2-2*(1-Z[k]))
+  }else 
+    X1[k]=1
+} 
+plot(ecdf(X1))
+Y=(X+X1)/2
+
+moy2=mean(Y)
+moy2
+ec2=sd(Y)
+c(ec,ec2)
+#l'espérance est égale à 0 qui est la valeur trouvée par calcul théo. et la variance a diminuée.
+```
+
+#Exercice 3:
+##Question1: Simulation
+```{r}
+N=10000
+lambda= 3
+U=runif(N)
+c=1+(1/lambda)
+X=c()
+for(k in seq(1,N)){
+	if(U[k]<=0){
+		X[k]=0
+	}else if((U[k]>0)&(U[k]<=1)){
+	X[k]=-(1/lambda)*log(c-(c/(lambda+1-lambda*U[k])))
+	}
+}
+plot(ecdf(X))
+#Moyenne
+moy=mean(X)
+ec=sd(X)
+IC=c(moy-1.96*ec/sqrt(N),moy+1.96*ec/sqrt(N))
+moy
+ec
+cat("intervalle de confiance : ", IC)
+
+```
+
+## Fthéorique:
+```{r}
+plot(ecdf(X))
+d=seq(min(X),max(X),0.01)
+Fth=c()
+for(i in seq(1,length(d))){
+	if(d[i]<=0){
+		Fth[i]=0
+	}else 
+		Fth[i]=-(1/lambda)*(1/(1-(exp(-lambda*d[i])/c)))+(1/lambda)+1
+}
+lines(d,Fth,col="red")
+
+```
+
+##Question2 : Variables antithétiques
+```{r}
+X1=c()
+for(k in seq(1,N)){
+	if((1-U[k])<=0){
+		X1[k]=0
+	}else if(((1-U[k])>0)&((1-U[k])<=1)){
+	  X1[k]=-(1/lambda)*log(c-(c/(lambda+1-lambda*U[k])))
+	}
+}
+Y=(X+X1)/2
+moy2=mean(Y)
+ec2=mean(Y)
+cat("Comparaison variances : ", c(ec,ec2))
+#La variance a bien diminué.
+```
+

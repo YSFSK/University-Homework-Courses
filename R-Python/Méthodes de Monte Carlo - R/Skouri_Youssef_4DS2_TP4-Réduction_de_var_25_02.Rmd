@@ -1,0 +1,120 @@
+---
+title: "TP4"
+output: html_document
+---
+
+#Exerice 1:
+##Question 1:
+```{r}
+N=10000
+U=runif(N,0,1)
+V=runif(N,0,1)
+Y=exp((U+V)^2)
+theta=mean(Y)
+ec=sd(Y)
+IC=c(theta-1.96*ec/sqrt(N),theta+1.96*ec/sqrt(N))
+cat("espérance : ",theta,"\n")
+cat("ecart-type : ",ec,"\n")
+cat("Intervalle de confiance  : ",IC)
+```
+
+##Question 2:
+### Point de controle U+V
+```{r}
+Z1=U+V
+C1=-cov(Y,Z1)/(var(Z1))
+W1=Y+C1*(Z1-mean(Z1))
+theta1=mean(W1)
+ec1=sd(W1)
+IC1=c(theta1-1.96*ec1/sqrt(N),theta1+1.96*ec1/sqrt(N))
+cat("C1 : ",C1,"\n")
+cat("espérance : ",theta1,"\n")
+cat("ecart-type : ",ec1,"\n")
+cat("Intervalle de confiance  : ",IC1,"\n")
+cat("(ecart-type 1 , ecart-type PC U+V) = ",c(ec,ec1))
+```
+
+### Point de controle (U+V)²
+```{r}
+Z2=(U+V)^2
+C2=-cov(Y,Z2)/(var(Z2))
+W2=Y+C2*(Z2-mean(Z2))
+theta2=mean(W2)
+ec2=sd(W2)
+IC2=c(theta2-1.96*ec2/sqrt(N),theta2+1.96*ec2/sqrt(N))
+c=c(ec,ec1,ec2)
+cat("C2 : ",C2,"\n")
+cat("espérance : ",theta2,"\n")
+cat("ecart-type : ",ec2,"\n")
+cat("Intervalle de confiance  : ",IC2,"\n")
+cat("(ecart-type 1,ecart-type PC U+V,ecart-type PC(U+V)² ) =",c(ec,ec1,ec2))
+```
+
+### Point de controle exp(U+V)
+```{r}
+Z3=exp(U+V)
+C3=-cov(Y,Z3)/(var(Z3))
+W3=Y+C3*(Z3-mean(Z3))
+theta3=mean(W3)
+ec3=sd(W3)
+IC3=c(theta3-1.96*ec3/sqrt(N),theta3+1.96*ec3/sqrt(N))
+cat("espérance : ",theta3,"\n")
+cat("ecart-type : ",ec3,"\n")
+cat("Intervalle de confiance  : ",IC3,"\n")
+cat("ec 1 , ec (U+V), ec (U+V)², ec exp(U+V)",c(ec,ec1,ec2,ec3))
+#La variance (ou ecart type) diminue au de plus en plus dans cet ordre
+# ec(MC)>ec avec Pc U+V>ec avec Pc (U+V)²>ec avec Pc exp(U+V)
+```
+
+
+#Exemple de cours :
+
+```{r}
+N=10000
+X=rnorm(N)
+Y=ifelse(X<(-10),1,0)
+theta=mean(Y)
+theta
+sum(Y!=0)
+#On remarque qu'il y a aucune valeur de X inférieure à -10 ,quel soluton?
+```
+
+#### On essaye de forcer l'échantillonnage à avoir pour qu'il soit autour de (-10) (vori cours)
+```{r}
+Y2=rnorm(N,-10,1)
+Z=ifelse(Y2<=-10,1,0)*exp(10*Y2+50)
+theta50=mean(Z)
+ec50=sd(Z)
+cat("espérance : ",theta50,"\n")
+cat("ecart-type : ",ec50,"\n")
+IC50=c(theta50-1.96*ec50/sqrt(N),theta50+1.96*ec50/sqrt(N))
+cat("Intervalle de confiance  : ",IC50)
+```
+
+
+#Exercice 3
+##Question 1:
+```{r}
+X=rcauchy(N)
+Z=ifelse(X<=4,1,0)
+theta5=1-mean(Z)
+cat("esperance :",theta5,"\n")
+ec5=sd(Z)
+cat("ecart-type : ",ec5,"\n")
+IC5=c(theta5-1.96*ec5/sqrt(N),theta5+1.96*ec5/sqrt(N))
+cat("Intervalle de confiance  : ",IC5)
+```
+
+#Question3:
+```{r}
+U=runif(N)
+Y=4/U
+Z2=(Y^2)/(4*pi*(1+Y^2))
+theta6=mean(Z2)
+theta2
+ec6=sd(Z2)
+cat("ecart-type : ",ec6,"\n")
+cat("ecart-type : ",theta6,"\n")
+cat("Comparaison",c(ec5,ec6))
+```
+

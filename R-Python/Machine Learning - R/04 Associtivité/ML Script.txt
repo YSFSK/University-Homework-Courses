@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------------------
+install.packages("arulesViz")
+
+library(grid)
+library(arulesViz)
+
+data("Groceries")
+LIST(Groceries)
+
+rules = apriori(Groceries,parameter = list(supp= 0.001 , conf=0.5))
+?apriori()
+
+
+inspect(head(sort(rules, by="lift")))
+#--------------------------------------------------------------------------------------
+rm(list=ls())
+
+bd=read.table(file = file.choose(),header = T,sep="\t",na.strings = "")
+
+aa=arules::read.transactions(file = file.choose()  , sep="\t",rm.duplicates = TRUE)
+rulesBD = apriori(aa,parameter = list(supp= 0.05 , conf=0.5))
+inspect(sort(rulesBD, by="lift"))
+
+plot(rulesBD)
+
+eclatRule=eclat(aa,parameter = list(supp= 0.05 ))
+
+plot(eclatRule)
+
+
+?spade()
